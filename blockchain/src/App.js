@@ -1,97 +1,96 @@
 // Import React
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
 // Web3 & Blockchain imports
-import Web3 from 'web3';
-import SupplyChain from './build/SupplyChain.json';
+import Web3 from "web3";
+import SupplyChain from "./build/SupplyChain.json";
 
 // Owner imports
-import Owner from './entities/Owner/Owner';
+import Owner from "./entities/Owner/Owner";
 
 // Supplier imports
-import Supplier from './entities/Supplier/Supplier';
+import Supplier from "./entities/Supplier/Supplier";
 // Transporter imports
-import Transporter from './entities/Transporter/Transporter';
+import Transporter from "./entities/Transporter/Transporter";
 
 // Manufacturer imports
-import Manufacturer from './entities/Manufacturer/Manufacturer';
+import Manufacturer from "./entities/Manufacturer/Manufacturer";
 // Wholesaler imports
-import Wholesaler from './entities/Wholesaler/Wholesaler';
+import Wholesaler from "./entities/Wholesaler/Wholesaler";
 
 // Distributor imports
-import Distributor from './entities/Distributor/Distributor';
+import Distributor from "./entities/Distributor/Distributor";
 
 // Utils
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import SignIn from './components/login/SignIn';
-import SignUp from './components/login/SignUp';
-import Landing from './components/home/Landing';
-import Loader from './components/Loader';
-import NotFound from './components/NotFound';
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import SignIn from "./components/login/SignIn";
+import SignUp from "./components/login/SignUp";
+import Landing from "./components/home/Landing";
+import Loader from "./components/Loader";
+import NotFound from "./components/NotFound";
 
-import Admin from './main_dashboard/layouts/Admin';
-import RTL from './main_dashboard/layouts/RTL';
+import Admin from "./main_dashboard/layouts/Admin";
+import RTL from "./main_dashboard/layouts/RTL";
 
 import "./main_dashboard/assets/css/material-dashboard-react.css?v=1.9.0";
 
 class App extends Component {
-
   constructor() {
     super();
     this.state = {
-      'account': null,
-      'supplyChain': null,
-      'identicon': null,
-      'loading': true,
-      'web3': null,
-    }
+      account: null,
+      supplyChain: null,
+      identicon: null,
+      loading: true,
+      web3: null,
+    };
   }
 
   async componentWillMount() {
-    this.loadWeb3()
-    this.loadBlockChain()
+    this.loadWeb3();
+    this.loadBlockChain();
   }
 
   async loadWeb3() {
     if (window.ethereum) {
       window.web3 = new Web3(window.ethereum);
       await window.ethereum.enable();
-    }
-    else if (window.web3) {
+    } else if (window.web3) {
       window.web3 = new Web3(window.web3.currentProvider);
-    }
-    else {
-      window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!');
+    } else {
+      window.alert(
+        "Non-Ethereum browser detected. You should consider trying MetaMask!"
+      );
     }
   }
 
   handleInputChange = (e) => {
     this.setState({
       [e.target.id]: e.target.value,
-    })
-  }
+    });
+  };
 
   async loadBlockChain() {
-    const web3 = window.web3
+    const web3 = window.web3;
     const accounts = await web3.eth.getAccounts();
     console.log(accounts);
 
-    this.setState({ 'account': accounts[0] });
+    this.setState({ account: accounts[0] });
     const networkId = await web3.eth.net.getId();
     const networkData = SupplyChain.networks[networkId];
     if (networkData) {
-      const supplyChain = new web3.eth.Contract(SupplyChain.abi, networkData.address);
-      this.setState(
-        {
-          'supplyChain': supplyChain,
-          'loading': false,
-          'web3': web3
-        }
+      const supplyChain = new web3.eth.Contract(
+        SupplyChain.abi,
+        networkData.address
       );
+      this.setState({
+        supplyChain: supplyChain,
+        loading: false,
+        web3: web3,
+      });
       console.log(this.state.supplyChain);
-
     } else {
-      window.alert('Supply chain contract not deployed to detected network.');
+      window.alert("Supply chain contract not deployed to detected network.");
     }
   }
 
@@ -104,7 +103,16 @@ class App extends Component {
             <Route exact path="/signup" component={SignUp} />
             <Route path="/signin" component={SignIn} />
 
-            <Route path="/owner" render={(props) => (<Owner account={this.state.account} supplyChain={this.state.supplyChain} web3={this.state.web3} />)} />
+            <Route
+              path="/owner"
+              render={(props) => (
+                <Owner
+                  account={this.state.account}
+                  supplyChain={this.state.supplyChain}
+                  web3={this.state.web3}
+                />
+              )}
+            />
             {/* <Route exact path="/owner/add-new-user" component={(() => <AddNewUser account={this.state.account} supplyChain={this.state.supplyChain} web3={this.state.web3} />)} />
             <Route exact path="/owner/view-user" component={(() => <ViewUser account={this.state.account} supplyChain={this.state.supplyChain} web3={this.state.web3} />)} /> */}
             {/* *********'/try is just for testing ************ */}
@@ -112,17 +120,44 @@ class App extends Component {
             <Route exact path="/try/view-user" component={(() => <ViewUser account={this.state.account} supplyChain={this.state.SupplyChain} web3={this.state.web3} />)} />
             <Route exact path="/try/add-user" component={(() => <AddNewUser account={this.state.account} supplyChain={this.state.SupplyChain} web3={this.state.web3} />)} /> */}
 
-            <Route path="/supplier" render={(props) => (<Supplier account={this.state.account} supplyChain={this.state.supplyChain} web3={this.state.web3} />)} />
+            <Route
+              path="/supplier"
+              render={(props) => (
+                <Supplier
+                  account={this.state.account}
+                  supplyChain={this.state.supplyChain}
+                  web3={this.state.web3}
+                />
+              )}
+            />
             {/* <Route exact path="/supplier/add-raw-material" component={(() => <AddRawMaterial account={this.state.account} supplyChain={this.state.supplyChain} web3={this.state.web3} />)} />
             <Route exact path="/supplier/view-raw-materials" component={(() => <ViewRawMaterials account={this.state.account} supplyChain={this.state.supplyChain} web3={this.state.web3} />)} />
             <Route exact path="/supplier/view-raw-materials/:id" component={RawMaterialInfo} />
             <Route exact path="/supplier/view-transactions/:id" component={ViewTransations} />
             <Route exact path="/supplier/view-requests/:id" component={ViewRequests} /> */}
 
-            <Route path="/transporter" render={(props) => (<Transporter account={this.state.account} supplyChain={this.state.supplyChain} web3={this.state.web3} />)} />
+            <Route
+              path="/transporter"
+              render={(props) => (
+                <Transporter
+                  account={this.state.account}
+                  supplyChain={this.state.supplyChain}
+                  web3={this.state.web3}
+                />
+              )}
+            />
             {/* <Route exact path="/transporter/handle-package" component={(() => <HandlePackage account={this.state.account} supplyChain={this.state.supplyChain} web3={this.state.web3} />)} /> */}
 
-            <Route path="/manufacturer" render={(props) => (<Manufacturer account={this.state.account} supplyChain={this.state.supplyChain} web3={this.state.web3} />)} />
+            <Route
+              path="/manufacturer"
+              render={(props) => (
+                <Manufacturer
+                  account={this.state.account}
+                  supplyChain={this.state.supplyChain}
+                  web3={this.state.web3}
+                />
+              )}
+            />
             {/* <Route exact path="/manufacturer/request-product" component={(() => <RequestProductManufacturer account={this.state.account} supplyChain={this.state.supplyChain} web3={this.state.web3} />)} />
             <Route exact path="/manufacturer/view-responses" component={(() => <ViewResponses account={this.state.account} supplyChain={this.state.supplyChain} web3={this.state.web3} />)} />
             <Route exact path="/manufacturer/receive-product" component={(() => <ReceiveProduct account={this.state.account} supplyChain={this.state.supplyChain} web3={this.state.web3} />)} />
@@ -132,7 +167,16 @@ class App extends Component {
             <Route exact path="/manufacturer/view-transactions/:id" component={ViewTransations} />
             <Route exact path="/manufacturer/view-requests/:id" component={ViewRequests} /> */}
 
-            <Route path="/wholesaler" render={(props) => (<Wholesaler account={this.state.account} supplyChain={this.state.supplyChain} web3={this.state.web3} />)} />
+            <Route
+              path="/wholesaler"
+              render={(props) => (
+                <Wholesaler
+                  account={this.state.account}
+                  supplyChain={this.state.supplyChain}
+                  web3={this.state.web3}
+                />
+              )}
+            />
             {/* <Route exact path="/wholesaler/view-medicines" component={(() => <ViewReceivedMedicines account={this.state.account} supplyChain={this.state.supplyChain} web3={this.state.web3} />)} />
             <Route exact path="/wholesaler/view-medicines/:id" component={WholesalerMedicineInfo} />
             <Route exact path="/wholesaler/request-product" component={(() => <RequestProductWholesaler account={this.state.account} supplyChain={this.state.supplyChain} web3={this.state.web3} />)} />
@@ -142,7 +186,16 @@ class App extends Component {
             <Route exact path="/wholesaler/view-requests/:id" component={ViewRequests} />
             <Route exact path="/wholesaler/view-transactions/:id" component={ViewTransations} /> */}
 
-            <Route path="/distributor" render={(props) => (<Distributor account={this.state.account} supplyChain={this.state.supplyChain} web3={this.state.web3} />)} />
+            <Route
+              path="/distributor"
+              render={(props) => (
+                <Distributor
+                  account={this.state.account}
+                  supplyChain={this.state.supplyChain}
+                  web3={this.state.web3}
+                />
+              )}
+            />
             {/* <Route exact path="/distributor/request-product" component={(() => <RequestProductDistributor account={this.state.account} supplyChain={this.state.supplyChain} web3={this.state.web3} />)} />
             <Route exact path="/distributor/view-responses" component={(() => <ViewResponses account={this.state.account} supplyChain={this.state.supplyChain} web3={this.state.web3} />)} />
             <Route exact path="/distributor/receive-medicine" component={(() => <DistributorReceiveProduct account={this.state.account} supplyChain={this.state.supplyChain} web3={this.state.web3} />)} />            <Route exact path="/distributor/view-medicines" component={(() => <DistributorViewReceivedMedicines account={this.state.account} supplyChain={this.state.supplyChain} web3={this.state.web3} />)} /> */}
@@ -156,18 +209,14 @@ class App extends Component {
             <Route exact path="/wholesaler/transfer-medicine" component={(() => <TransferMedicine account={this.state.account} supplyChain={this.state.supplyChain} web3={this.state.web3} />)} />
             <Route exact path="/wholesaler/receive-medicine" component={(() => <WholesalerReceiveProduct account={this.state.account} supplyChain={this.state.supplyChain} web3={this.state.web3} />)} /> */}
 
-
             <Route path="" component={NotFound} />
             <Route path="/admin" component={Admin} />
             <Route path="/rtl" component={RTL} />
           </Switch>
         </Router>
       );
-    }
-    else {
-      return (
-        <Loader></Loader>
-      );
+    } else {
+      return <Loader></Loader>;
     }
   }
 }
